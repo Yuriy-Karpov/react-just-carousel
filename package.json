@@ -1,0 +1,40 @@
+{
+  "name": "react-just-carousel",
+  "version": "0.0.1",
+  "description": "pure react carousel, without depending",
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
+  "typescript": {
+    "main": "./src/index.ts"
+  },
+  "scripts": {
+    "dev": "tsc -w -d",
+    "compile": "tsc -d",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Yuriy-Karpov/react-just-carousel.git"
+  },
+  "keywords": [
+    "carousel",
+    "react-carousel",
+    "slider"
+  ],
+  "author": "karpov.y.al",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Yuriy-Karpov/react-just-carousel/issues"
+  },
+  "homepage": "https://github.com/Yuriy-Karpov/react-just-carousel#readme",
+  "dependencies": {},
+  "peerDependencies": {
+    "react": "^16.13.1",
+    "react-dom": "*"
+  },
+  "devDependencies": {
+    "tslint": "5.18.0",
+    "typescript": "3.4.5",
+    "@types/react": "16.9.19"
+  }
+}

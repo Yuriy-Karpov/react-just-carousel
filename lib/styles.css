@@ -1,0 +1,32 @@
+.carousel {
+    max-width: 100%;
+    overflow: hidden;
+}
+.carousel-wrap {
+    position: relative;
+}
+.slideBox {
+    display: flex;
+    transform: translateX(0px);
+    transition: transform ease-in-out 0.4s;
+}
+.button {
+    cursor: pointer;
+    user-select: none;
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.6);
+    top: 50%;
+    margin-top: -10px;
+}
+.button span {
+    color: #333;
+}
+.button.left {
+    left: 15px;
+}
+.button.right {
+    right: 15px;
+}
