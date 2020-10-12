@@ -13,7 +13,7 @@ export function Slide({data, id, size}:ISlide) {
         }
     }, []);
     return (
-        <div ref={measuredRef} className="itemSlide">
+        <div ref={measuredRef} className="rj-carousel__slide">
             {data}
         </div>
     );

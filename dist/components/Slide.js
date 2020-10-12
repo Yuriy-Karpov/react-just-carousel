@@ -7,7 +7,7 @@ function Slide({ data, id, size }) {
             size[id] = node.getBoundingClientRect().width;
         }
     }, []);
-    return (React.createElement("div", { ref: measuredRef, className: "itemSlide" }, data));
+    return (React.createElement("div", { ref: measuredRef, className: "rj-carousel__slide" }, data));
 }
 exports.Slide = Slide;
 //# sourceMappingURL=Slide.js.map

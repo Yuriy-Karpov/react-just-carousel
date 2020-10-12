@@ -1,0 +1,44 @@
+.rj-carousel {
+    max-width: 100%;
+}
+.rj-carousel_relative {
+    position: relative
+}
+.rj-carousel__wrap {
+    overflow: hidden;
+    position: relative;
+}
+.rj-carousel__slide-box {
+    display: flex;
+    transform: translateX(0px);
+    transition: transform ease-in-out 0.4s;
+}
+.rj-carousel__btn-handle {
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+.rj-carousel__btn-default {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.6);
+    top: 50%;
+    margin-top: -10px;
+    color: #333;
+    text-align: center;
+    line-height: 17px;
+    font-size: 26px;
+    font-family: Arial, serif;
+    overflow: hidden;
+}
+
+.rj-carousel__btn-default_left {
+    left: 15px;
+}
+.rj-carousel__btn-default_right {
+    right: 15px;
+}

@@ -8,11 +8,16 @@ import {IElementSizeType, IOptions, sideEnumType} from './type';
 import {MutableRefObject} from 'react';
 import {moveToSlide} from './utils/moveToSlide';
 import {CarouselView} from './components/CarouselView';
-import {ButtonRight, ButtonLeft} from './components/ButtonCarousel';
+import {Button} from './components/ButtonCarousel';
 
 
-export const Carousel = (options: IOptions) => {
-    const {children} = options;
+export const JustCarousel = (options: IOptions) => {
+    const {
+        children,
+        renderLeftButton,
+        renderRightButton,
+        isRelative = true,
+    } = options;
 
     if (!children) {
         return null;
@@ -63,8 +68,9 @@ export const Carousel = (options: IOptions) => {
         <CarouselView
             refCarousel={refCarousel}
             slideBoxOffset={slideBoxOffset}
-            leftButton={<ButtonLeft handle={handleLeft}/>}
-            rightButton={<ButtonRight handle={handleRight}/>}
+            leftButton={<Button handle={handleLeft} customRender={renderLeftButton} side={sideEnum.LEFT}/>}
+            rightButton={<Button handle={handleRight} customRender={renderRightButton} side={sideEnum.RIGHT}/>}
+            isRelative={isRelative}
         >
             {React.Children.map(children, (child, i) => {
                 return (

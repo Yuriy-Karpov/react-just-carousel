@@ -1,5 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var Carousel_1 = require("./Carousel");
-exports.Carousel = Carousel_1.Carousel;
+exports.JustCarousel = Carousel_1.JustCarousel;
 //# sourceMappingURL=index.js.map
