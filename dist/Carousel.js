@@ -8,8 +8,8 @@ const Slide_1 = require("./components/Slide");
 const moveToSlide_1 = require("./utils/moveToSlide");
 const CarouselView_1 = require("./components/CarouselView");
 const ButtonCarousel_1 = require("./components/ButtonCarousel");
-exports.Carousel = (options) => {
-    const { children } = options;
+exports.JustCarousel = (options) => {
+    const { children, renderLeftButton, renderRightButton, isRelative = true, } = options;
     if (!children) {
         return null;
     }
@@ -47,7 +47,7 @@ exports.Carousel = (options) => {
     const slideBoxOffset = {
         transform: `translateX(${state.offset}px)`
     };
-    return (React.createElement(CarouselView_1.CarouselView, { refCarousel: refCarousel, slideBoxOffset: slideBoxOffset, leftButton: React.createElement(ButtonCarousel_1.ButtonLeft, { handle: handleLeft }), rightButton: React.createElement(ButtonCarousel_1.ButtonRight, { handle: handleRight }) }, React.Children.map(children, (child, i) => {
+    return (React.createElement(CarouselView_1.CarouselView, { refCarousel: refCarousel, slideBoxOffset: slideBoxOffset, leftButton: React.createElement(ButtonCarousel_1.Button, { handle: handleLeft, customRender: renderLeftButton, side: const_1.sideEnum.LEFT }), rightButton: React.createElement(ButtonCarousel_1.Button, { handle: handleRight, customRender: renderRightButton, side: const_1.sideEnum.RIGHT }), isRelative: isRelative }, React.Children.map(children, (child, i) => {
         return (React.createElement(Slide_1.Slide, { id: i, data: child, size: elementSize.current }));
     })));
 };

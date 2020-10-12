@@ -16,7 +16,7 @@
     "noUnusedLocals": true,
     "module": "commonjs",
     "moduleResolution": "node",
-    "outDir": "./lib",
+    "outDir": "./dist",
     "sourceMap": true,
     "suppressImplicitAnyIndexErrors": true,
     "target": "ES6",

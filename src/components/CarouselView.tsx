@@ -6,7 +6,9 @@ interface ICarouselView {
     slideBoxOffset: React.CSSProperties,
     leftButton: React.ReactNode;
     rightButton: React.ReactNode;
+    isRelative: boolean;
 }
+
 export const CarouselView = React.memo((
     {
         children,
@@ -14,11 +16,14 @@ export const CarouselView = React.memo((
         slideBoxOffset,
         leftButton,
         rightButton,
-    }:ICarouselView) => {
+        isRelative
+    }: ICarouselView) => {
     return (
-        <div ref={refCarousel} className="carousel carousel-wrap">
-            <div className="slideBox" style={slideBoxOffset}>
-                {children}
+        <div className={`rj-carousel${isRelative ? ' rj-carousel_relative' : ''}`}>
+            <div ref={refCarousel} className="rj-carousel__wrap">
+                <div className="rj-carousel__slide-box" style={slideBoxOffset}>
+                    {children}
+                </div>
             </div>
             {leftButton}
             {rightButton}
