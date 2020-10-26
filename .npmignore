@@ -5,3 +5,5 @@ src
 test
 examples
 coverage
+.idea
+node_modules
