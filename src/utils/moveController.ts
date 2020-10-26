@@ -38,10 +38,11 @@ export class MoveController {
                 this.end = true;
             } else {
                 this.offset = this.offset - widthItem;
+                this.prevOffset = this.offset;
             }
 
             this.count++;
-            this.prevOffset = this.offset;
+
 
             return this.offset;
         }

@@ -17,10 +17,10 @@ export const JustCarousel: React.FC<IOptions> = ({
 }) => {
     const countChildren = React.Children.count(children);
 
-    const [offset, setOffset] = React.useState(0);
-
     const elementSize: React.MutableRefObject<IElementSizeType> = React.useRef({});
     const refCarousel = React.useRef(null);
+    const refSlideBox = React.useRef(null);
+    const calcOffset = React.useRef(0);
     const moveController = React.useRef<MoveController>();
 
     const handleWindowResize = React.useCallback(() => {
@@ -42,7 +42,12 @@ export const JustCarousel: React.FC<IOptions> = ({
             moveController.current = new MoveController(refCarousel.current, elementSize.current);
         }
 
-        setOffset(moveController.current.calculate(side, countChildren));
+        calcOffset.current = moveController.current.calculate(side, countChildren);
+        //тут добавить тротлинг, или задержку и сумирование "нажатей" пользователя
+        window.requestAnimationFrame(() => {
+            refSlideBox.current.style.transform = `translateX(${calcOffset.current}px)`
+        });
+
     }, []);
 
     const handleRight = React.useCallback(() => {
@@ -52,18 +57,76 @@ export const JustCarousel: React.FC<IOptions> = ({
         move(sideEnum.LEFT);
     }, []);
 
-    const slideBoxOffset = React.useMemo(() => ({
-        transform: `translateX(${offset}px)`
-    }), [offset]);
+    /**
+     * ********** onTouchMove ********** *
+     * вытащить в отдельную хуку
+     */
+    const firstFinger = 0;
+    const touchStart = React.useRef(null);
+    const touchSide = React.useRef<null|sideEnumType>(null);
+    const onTouchMove = React.useCallback((e) => {
+        switch (e.type) {
+            case 'touchstart': {
+                touchStart.current = e.touches[firstFinger].screenX;
+                break;
+            }
+            case 'touchmove': {
+                e.stopPropagation();
+                const moveX = touchStart.current - e.touches[firstFinger].screenX;
+               if (!touchSide.current && moveX >= 15) {
+                   touchSide.current = sideEnum.RIGHT;
+                   // надо убрать анимацию с последнего элемента
+                   const moveOffset = calcOffset.current - 50;
+                   window.requestAnimationFrame(() => {
+                       refSlideBox.current.style.transform = `translateX(${moveOffset}px)`
+                   });
+               }
+               if (!touchSide.current && moveX <= -15) {
+                   touchSide.current = sideEnum.LEFT;
+                   const moveOffset = calcOffset.current !== 0 ? calcOffset.current + 50 : calcOffset.current;
+                   window.requestAnimationFrame(() => {
+                       refSlideBox.current.style.transform = `translateX(${moveOffset}px)`
+                   });
+               }
+                break;
+            }
+            case 'touchend': {
+                if (touchSide.current) {
+                    if (!moveController.current) {
+                        // это надо исправить
+                        moveController.current = new MoveController(refCarousel.current, elementSize.current);
+                    }
+
+                    calcOffset.current = moveController.current.calculate(touchSide.current, countChildren);
+                    touchSide.current = null;
+                    window.requestAnimationFrame(() => {
+                        refSlideBox.current.style.transform = `translateX(${calcOffset.current}px)`
+                    });
+                }
+                break;
+            }
+            case 'touchcancel':
+            default: {
+                if (touchSide.current) {
+                    touchSide.current = null;
+                    refSlideBox.current.style.transform = `translateX(${calcOffset.current}px)`
+                }
+                break;
+            }
+
+        }
+    }, []);
+
 
     if (!children) {
         return null;
     }
-
+    console.log('RE-RENDER');
     return (
         <CarouselView
+            onTouchMove={onTouchMove}
             refCarousel={refCarousel}
-            slideBoxOffset={slideBoxOffset}
+            refSlideBox={refSlideBox}
             leftButton={<Button handle={handleLeft} customRender={renderLeftButton} side={sideEnum.LEFT}/>}
             rightButton={<Button handle={handleRight} customRender={renderRightButton} side={sideEnum.RIGHT}/>}
             isRelative={isRelative}

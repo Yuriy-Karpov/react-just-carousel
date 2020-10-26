@@ -28,9 +28,9 @@ class MoveController {
             }
             else {
                 this.offset = this.offset - widthItem;
+                this.prevOffset = this.offset;
             }
             this.count++;
-            this.prevOffset = this.offset;
             return this.offset;
         }
         if (side === const_1.sideEnum.LEFT && this.count > 0) {
