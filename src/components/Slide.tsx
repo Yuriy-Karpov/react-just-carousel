@@ -3,13 +3,13 @@ import * as React from 'react';
 interface ISlide {
     data: React.ReactNode;
     id: number;
-    size: Object;
+    refSize: Object;
 }
 
-export function Slide({data, id, size}:ISlide) {
+export function Slide({data, id, refSize}:ISlide) {
     const measuredRef = React.useCallback(node => {
         if (node !== null) {
-            size[id] = node.getBoundingClientRect().width;
+            refSize[id] = node.getBoundingClientRect().width;
         }
     }, []);
     return (

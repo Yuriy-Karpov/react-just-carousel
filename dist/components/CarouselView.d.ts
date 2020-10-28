@@ -2,10 +2,11 @@ import * as React from 'react';
 interface ICarouselView {
     children: React.ReactNode;
     refCarousel: React.RefObject<HTMLDivElement>;
-    slideBoxOffset: React.CSSProperties;
+    refSlideBox: React.RefObject<HTMLDivElement>;
     leftButton: React.ReactNode;
     rightButton: React.ReactNode;
     isRelative: boolean;
+    onTouchMove: any;
 }
-export declare const CarouselView: React.MemoExoticComponent<({ children, refCarousel, slideBoxOffset, leftButton, rightButton, isRelative }: ICarouselView) => JSX.Element>;
+export declare const CarouselView: React.MemoExoticComponent<({ children, refCarousel, refSlideBox, leftButton, rightButton, isRelative, onTouchMove }: ICarouselView) => JSX.Element>;
 export {};
