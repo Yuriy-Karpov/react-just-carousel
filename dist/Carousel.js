@@ -7,7 +7,7 @@ const Slide_1 = require("./components/Slide");
 const moveController_1 = require("./utils/moveController");
 const CarouselView_1 = require("./components/CarouselView");
 const ButtonCarousel_1 = require("./components/ButtonCarousel");
-exports.JustCarousel = ({ children, renderLeftButton, renderRightButton, isRelative = true, }) => {
+exports.JustCarousel = ({ children, renderLeftButton, renderRightButton, isRelative = true, marginBlock = 0, }) => {
     const countChildren = React.Children.count(children);
     const elementSize = React.useRef({});
     const refCarousel = React.useRef(null);
@@ -16,7 +16,7 @@ exports.JustCarousel = ({ children, renderLeftButton, renderRightButton, isRelat
     const moveController = React.useRef();
     const handleWindowResize = React.useCallback(() => {
         if (moveController.current) {
-            moveController.current.calculateResize(refCarousel.current, elementSize.current);
+            moveController.current.calculateResize(refCarousel.current, elementSize.current, marginBlock);
         }
     }, []);
     React.useEffect(() => {
@@ -27,10 +27,10 @@ exports.JustCarousel = ({ children, renderLeftButton, renderRightButton, isRelat
     }, []);
     const move = React.useCallback((side) => {
         if (!moveController.current) {
-            moveController.current = new moveController_1.MoveController(refCarousel.current, elementSize.current);
+            moveController.current = new moveController_1.MoveController(refCarousel.current, elementSize.current, marginBlock);
         }
-        calcOffset.current = moveController.current.calculate(side, countChildren);
-        //тут добавить тротлинг, или задержку и сумирование "нажатей" пользователя
+        calcOffset.current = moveController.current.calculate(side, countChildren, marginBlock);
+        //TODO add throttling
         window.requestAnimationFrame(() => {
             refSlideBox.current.style.transform = `translateX(${calcOffset.current}px)`;
         });
@@ -43,7 +43,7 @@ exports.JustCarousel = ({ children, renderLeftButton, renderRightButton, isRelat
     }, []);
     /**
      * ********** onTouchMove ********** *
-     * вытащить в отдельную хуку
+     * TODO fix, move in hook
      */
     const firstFinger = 0;
     const touchStart = React.useRef(null);
@@ -78,9 +78,10 @@ exports.JustCarousel = ({ children, renderLeftButton, renderRightButton, isRelat
                 if (touchSide.current) {
                     if (!moveController.current) {
                         // это надо исправить
-                        moveController.current = new moveController_1.MoveController(refCarousel.current, elementSize.current);
+                        moveController.current = new moveController_1.MoveController(refCarousel.current, elementSize.current, marginBlock);
                     }
-                    calcOffset.current = moveController.current.calculate(touchSide.current, countChildren);
+                    console.log('++marginBlock 3: ', marginBlock);
+                    calcOffset.current = moveController.current.calculate(touchSide.current, countChildren, marginBlock);
                     touchSide.current = null;
                     window.requestAnimationFrame(() => {
                         refSlideBox.current.style.transform = `translateX(${calcOffset.current}px)`;
@@ -101,9 +102,9 @@ exports.JustCarousel = ({ children, renderLeftButton, renderRightButton, isRelat
     if (!children) {
         return null;
     }
-    console.log('RE-RENDER');
-    return (React.createElement(CarouselView_1.CarouselView, { onTouchMove: onTouchMove, refCarousel: refCarousel, refSlideBox: refSlideBox, leftButton: React.createElement(ButtonCarousel_1.Button, { handle: handleLeft, customRender: renderLeftButton, side: const_1.sideEnum.LEFT }), rightButton: React.createElement(ButtonCarousel_1.Button, { handle: handleRight, customRender: renderRightButton, side: const_1.sideEnum.RIGHT }), isRelative: isRelative }, React.Children.map(children, (child, i) => {
-        return (React.createElement(Slide_1.Slide, { id: i, data: child, refSize: elementSize.current }));
+    console.log('RE-RENDER 1');
+    return (React.createElement(CarouselView_1.CarouselView, { marginBlock: marginBlock, onTouchMove: onTouchMove, refCarousel: refCarousel, refSlideBox: refSlideBox, leftButton: React.createElement(ButtonCarousel_1.Button, { handle: handleLeft, customRender: renderLeftButton, side: const_1.sideEnum.LEFT }), rightButton: React.createElement(ButtonCarousel_1.Button, { handle: handleRight, customRender: renderRightButton, side: const_1.sideEnum.RIGHT }), isRelative: isRelative }, React.Children.map(children, (child, i) => {
+        return (React.createElement(Slide_1.Slide, { id: i, data: child, refSize: elementSize.current, marginBlock: marginBlock }));
     })));
 };
 //# sourceMappingURL=Carousel.js.map

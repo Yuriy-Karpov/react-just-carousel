@@ -1,6 +1,6 @@
 {
   "name": "react-just-carousel",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "pure react carousel, without depending",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -10,7 +10,7 @@
   "scripts": {
     "dev": "npm run tsw | npm run scss",
     "tsw": "tsc -w -d",
-    "compile": "tsc -d",
+    "build": "tsc -d",
     "test": "echo \"Error: no test specified\" && exit 1",
     "scss": "node-sass -w src/scss -o dist/"
   },

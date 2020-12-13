@@ -39,7 +39,7 @@ function App() {
                 <div className="Carousel-wrap">
                     <JustCarousel>
                         {testData.map((item, i) => (
-                            <SlideHeader key={i} title={i + 1}/>
+                            <SlideHeader key={item.title} title={i + 1}/>
                         ))}
                     </JustCarousel>
                 </div>
@@ -48,9 +48,9 @@ function App() {
                 <div className="container">
                     <h3>Carousel can work with blocks of different width and height</h3>
                     <div className="carousel-variant-2">
-                        <JustCarousel>
+                        <JustCarousel marginBlock={10}>
                             {testData.map((item, i) => (
-                                <ItemBlock key={i} title={item.title} width={item.width}/>
+                                <ItemBlock key={item.title} title={item.title} width={item.width}/>
                             ))}
                         </JustCarousel>
                     </div>
