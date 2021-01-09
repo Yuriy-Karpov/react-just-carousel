@@ -5,6 +5,7 @@ export interface IOptions {
     renderLeftButton?: React.ReactNode;
     renderRightButton?: React.ReactNode;
     isRelative?: boolean;
+    marginBlock?: number;
 }
 
 export type sideEnumType = 'left' | 'right';

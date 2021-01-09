@@ -155,7 +155,7 @@ template {
 .ItemBlock {
     height: 200px;
     background: #41e2b0;
-    margin: 10px;
+    /*margin: 10px;*/
     text-align: left;
     padding: 5px;
     font-weight: bold;

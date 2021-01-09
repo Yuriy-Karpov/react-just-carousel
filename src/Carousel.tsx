@@ -10,13 +10,13 @@ import {Button} from './components/ButtonCarousel';
 
 
 export const JustCarousel: React.FC<IOptions> = ({
-    children,
-    renderLeftButton,
-    renderRightButton,
-    isRelative = true,
-}) => {
+                                                     children,
+                                                     renderLeftButton,
+                                                     renderRightButton,
+                                                     isRelative = true,
+                                                     marginBlock = 0,
+                                                 }) => {
     const countChildren = React.Children.count(children);
-
     const elementSize: React.MutableRefObject<IElementSizeType> = React.useRef({});
     const refCarousel = React.useRef(null);
     const refSlideBox = React.useRef(null);
@@ -25,7 +25,7 @@ export const JustCarousel: React.FC<IOptions> = ({
 
     const handleWindowResize = React.useCallback(() => {
         if (moveController.current) {
-            moveController.current.calculateResize(refCarousel.current, elementSize.current);
+            moveController.current.calculateResize(refCarousel.current, elementSize.current, marginBlock);
         }
     }, []);
 
@@ -39,68 +39,84 @@ export const JustCarousel: React.FC<IOptions> = ({
 
     const move = React.useCallback((side: sideEnumType) => {
         if (!moveController.current) {
-            moveController.current = new MoveController(refCarousel.current, elementSize.current);
+            moveController.current = new MoveController(refCarousel.current, elementSize.current, marginBlock);
         }
-
-        calcOffset.current = moveController.current.calculate(side, countChildren);
-        //тут добавить тротлинг, или задержку и сумирование "нажатей" пользователя
+        calcOffset.current = moveController.current.calculate(side, countChildren, marginBlock);
         window.requestAnimationFrame(() => {
             refSlideBox.current.style.transform = `translateX(${calcOffset.current}px)`
         });
 
-    }, []);
+    }, [countChildren]);
 
     const handleRight = React.useCallback(() => {
+        console.log('++handleRight')
         move(sideEnum.RIGHT);
-    }, []);
+    }, [countChildren]);
     const handleLeft = React.useCallback(() => {
+        console.log('++handleLeft');
         move(sideEnum.LEFT);
-    }, []);
+    }, [countChildren]);
 
     /**
      * ********** onTouchMove ********** *
-     * вытащить в отдельную хуку
+     * TODO fix, move in hook
      */
     const firstFinger = 0;
     const touchStart = React.useRef(null);
-    const touchSide = React.useRef<null|sideEnumType>(null);
+    const touchSide = React.useRef<null | sideEnumType>(null);
+    const offsetAnimSlide = 100;
     const onTouchMove = React.useCallback((e) => {
+
         switch (e.type) {
+            case 'mousedown':
             case 'touchstart': {
                 touchStart.current = e.touches[firstFinger].screenX;
                 break;
             }
+            case 'mousemove':
             case 'touchmove': {
                 e.stopPropagation();
+                e.preventDefault();
+
                 const moveX = touchStart.current - e.touches[firstFinger].screenX;
-               if (!touchSide.current && moveX >= 15) {
-                   touchSide.current = sideEnum.RIGHT;
-                   // надо убрать анимацию с последнего элемента
-                   const moveOffset = calcOffset.current - 50;
-                   window.requestAnimationFrame(() => {
-                       refSlideBox.current.style.transform = `translateX(${moveOffset}px)`
-                   });
-               }
-               if (!touchSide.current && moveX <= -15) {
-                   touchSide.current = sideEnum.LEFT;
-                   const moveOffset = calcOffset.current !== 0 ? calcOffset.current + 50 : calcOffset.current;
-                   window.requestAnimationFrame(() => {
-                       refSlideBox.current.style.transform = `translateX(${moveOffset}px)`
-                   });
-               }
+                // if (!touchSide.current && moveX >= 5) {
+                //     // document.body
+                //     document.addEventListener('touchmove', function (e) {
+                //         e.preventDefault();
+                //     }, {passive: false});
+                // }
+                if (!touchSide.current && moveX >= 15) {
+                    touchSide.current = sideEnum.RIGHT;
+                    // надо убрать анимацию с последнего элемента
+                    const moveOffset = calcOffset.current - offsetAnimSlide;
+                    window.requestAnimationFrame(() => {
+                        refSlideBox.current.style.transform = `translateX(${moveOffset}px)`
+                    });
+                }
+                if (!touchSide.current && moveX <= -15) {
+                    touchSide.current = sideEnum.LEFT;
+                    const moveOffset = calcOffset.current !== 0 ? calcOffset.current + offsetAnimSlide : calcOffset.current;
+                    window.requestAnimationFrame(() => {
+                        refSlideBox.current.style.transform = `translateX(${moveOffset}px)`
+                    });
+                }
                 break;
             }
+            case 'mouseup':
             case 'touchend': {
                 if (touchSide.current) {
                     if (!moveController.current) {
                         // это надо исправить
-                        moveController.current = new MoveController(refCarousel.current, elementSize.current);
+                        moveController.current = new MoveController(refCarousel.current, elementSize.current, marginBlock);
                     }
-
-                    calcOffset.current = moveController.current.calculate(touchSide.current, countChildren);
+                    console.log('++marginBlock 3: ', marginBlock)
+                    calcOffset.current = moveController.current.calculate(touchSide.current, countChildren, marginBlock);
                     touchSide.current = null;
                     window.requestAnimationFrame(() => {
                         refSlideBox.current.style.transform = `translateX(${calcOffset.current}px)`
+                    });
+
+                    document.removeEventListener('touchmove', function (e) {
                     });
                 }
                 break;
@@ -115,15 +131,15 @@ export const JustCarousel: React.FC<IOptions> = ({
             }
 
         }
-    }, []);
+    }, [countChildren]);
 
 
     if (!children) {
         return null;
     }
-    console.log('RE-RENDER');
     return (
         <CarouselView
+            marginBlock={marginBlock}
             onTouchMove={onTouchMove}
             refCarousel={refCarousel}
             refSlideBox={refSlideBox}
@@ -133,7 +149,7 @@ export const JustCarousel: React.FC<IOptions> = ({
         >
             {React.Children.map(children, (child, i) => {
                 return (
-                    <Slide id={i} data={child} refSize={elementSize.current}/>
+                    <Slide id={i} data={child} refSize={elementSize.current} marginBlock={marginBlock}/>
                 );
             })}
         </CarouselView>

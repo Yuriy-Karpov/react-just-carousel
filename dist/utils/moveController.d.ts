@@ -7,7 +7,7 @@ export declare class MoveController {
     private widthCarousel;
     private fullWidth;
     private sized;
-    constructor(carouselDiv: HTMLDivElement, sized: IElementSizeType);
-    calculateResize(carouselDiv: HTMLDivElement, sized: IElementSizeType): void;
-    calculate(side: sideEnumType, countChildren: number): number;
+    constructor(carouselDiv: HTMLDivElement, sized: IElementSizeType, marginBlock: number);
+    calculateResize(carouselDiv: HTMLDivElement, sized: IElementSizeType, marginBlock: number): void;
+    calculate(side: sideEnumType, countChildren: number, marginBlock: number): number;
 }

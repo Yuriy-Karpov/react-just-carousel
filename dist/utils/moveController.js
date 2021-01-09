@@ -2,23 +2,22 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const const_1 = require("../const");
 class MoveController {
-    constructor(carouselDiv, sized) {
+    constructor(carouselDiv, sized, marginBlock) {
         this.count = 0;
         this.offset = 0;
         this.prevOffset = 0;
         this.end = false;
-        this.calculateResize(carouselDiv, sized);
+        this.calculateResize(carouselDiv, sized, marginBlock);
     }
-    calculateResize(carouselDiv, sized) {
+    calculateResize(carouselDiv, sized, marginBlock) {
         this.sized = sized;
         this.widthCarousel = carouselDiv.clientWidth;
-        //TODO тут надо пересчитывать если есть изменения в props
         this.fullWidth = Object.values(sized).reduce((pre, current) => {
-            return pre + current;
+            return pre + current + (marginBlock * 2);
         }, 0);
     }
     // TODO: на счет countChildren не уверен, может тоже можно в конструктор передать
-    calculate(side, countChildren) {
+    calculate(side, countChildren, marginBlock) {
         if (side === const_1.sideEnum.RIGHT && this.count < countChildren && !this.end) {
             const widthItem = this.sized[this.count];
             const offsetAndSlider = Math.abs(this.offset) + this.widthCarousel + widthItem;
@@ -27,7 +26,7 @@ class MoveController {
                 this.end = true;
             }
             else {
-                this.offset = this.offset - widthItem;
+                this.offset = this.offset - (widthItem + (marginBlock * 2));
                 this.prevOffset = this.offset;
             }
             this.count++;
@@ -40,7 +39,7 @@ class MoveController {
                 this.end = false;
             }
             else {
-                this.offset = this.offset + widthItem;
+                this.offset = this.offset + (widthItem + (marginBlock * 2));
             }
             this.count--;
             this.prevOffset = this.offset;

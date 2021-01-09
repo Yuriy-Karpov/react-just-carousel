@@ -21,6 +21,7 @@ export const CustomBtnBlock = () => {
         <p>It is possible to pass your buttons, and disabling relative wrappers for buttons</p>
         <div className="carousel-variant--custom-btn">
             <JustCarousel
+                marginBlock={15}
                 renderLeftButton={<ButtonLeft/>}
                 renderRightButton={<ButtonRight/>}
                 isRelative={false}

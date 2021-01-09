@@ -4,6 +4,7 @@ export interface IOptions {
     renderLeftButton?: React.ReactNode;
     renderRightButton?: React.ReactNode;
     isRelative?: boolean;
+    marginBlock?: number;
 }
 export declare type sideEnumType = 'left' | 'right';
 export interface IElementSizeType {
