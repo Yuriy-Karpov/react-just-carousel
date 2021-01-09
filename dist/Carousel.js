@@ -30,17 +30,18 @@ exports.JustCarousel = ({ children, renderLeftButton, renderRightButton, isRelat
             moveController.current = new moveController_1.MoveController(refCarousel.current, elementSize.current, marginBlock);
         }
         calcOffset.current = moveController.current.calculate(side, countChildren, marginBlock);
-        //TODO add throttling
         window.requestAnimationFrame(() => {
             refSlideBox.current.style.transform = `translateX(${calcOffset.current}px)`;
         });
-    }, []);
+    }, [countChildren]);
     const handleRight = React.useCallback(() => {
+        console.log('++handleRight');
         move(const_1.sideEnum.RIGHT);
-    }, []);
+    }, [countChildren]);
     const handleLeft = React.useCallback(() => {
+        console.log('++handleLeft');
         move(const_1.sideEnum.LEFT);
-    }, []);
+    }, [countChildren]);
     /**
      * ********** onTouchMove ********** *
      * TODO fix, move in hook
@@ -48,32 +49,43 @@ exports.JustCarousel = ({ children, renderLeftButton, renderRightButton, isRelat
     const firstFinger = 0;
     const touchStart = React.useRef(null);
     const touchSide = React.useRef(null);
+    const offsetAnimSlide = 100;
     const onTouchMove = React.useCallback((e) => {
         switch (e.type) {
+            case 'mousedown':
             case 'touchstart': {
                 touchStart.current = e.touches[firstFinger].screenX;
                 break;
             }
+            case 'mousemove':
             case 'touchmove': {
                 e.stopPropagation();
+                e.preventDefault();
                 const moveX = touchStart.current - e.touches[firstFinger].screenX;
+                // if (!touchSide.current && moveX >= 5) {
+                //     // document.body
+                //     document.addEventListener('touchmove', function (e) {
+                //         e.preventDefault();
+                //     }, {passive: false});
+                // }
                 if (!touchSide.current && moveX >= 15) {
                     touchSide.current = const_1.sideEnum.RIGHT;
                     // надо убрать анимацию с последнего элемента
-                    const moveOffset = calcOffset.current - 50;
+                    const moveOffset = calcOffset.current - offsetAnimSlide;
                     window.requestAnimationFrame(() => {
                         refSlideBox.current.style.transform = `translateX(${moveOffset}px)`;
                     });
                 }
                 if (!touchSide.current && moveX <= -15) {
                     touchSide.current = const_1.sideEnum.LEFT;
-                    const moveOffset = calcOffset.current !== 0 ? calcOffset.current + 50 : calcOffset.current;
+                    const moveOffset = calcOffset.current !== 0 ? calcOffset.current + offsetAnimSlide : calcOffset.current;
                     window.requestAnimationFrame(() => {
                         refSlideBox.current.style.transform = `translateX(${moveOffset}px)`;
                     });
                 }
                 break;
             }
+            case 'mouseup':
             case 'touchend': {
                 if (touchSide.current) {
                     if (!moveController.current) {
@@ -85,6 +97,8 @@ exports.JustCarousel = ({ children, renderLeftButton, renderRightButton, isRelat
                     touchSide.current = null;
                     window.requestAnimationFrame(() => {
                         refSlideBox.current.style.transform = `translateX(${calcOffset.current}px)`;
+                    });
+                    document.removeEventListener('touchmove', function (e) {
                     });
                 }
                 break;
@@ -98,11 +112,10 @@ exports.JustCarousel = ({ children, renderLeftButton, renderRightButton, isRelat
                 break;
             }
         }
-    }, []);
+    }, [countChildren]);
     if (!children) {
         return null;
     }
-    console.log('RE-RENDER 1');
     return (React.createElement(CarouselView_1.CarouselView, { marginBlock: marginBlock, onTouchMove: onTouchMove, refCarousel: refCarousel, refSlideBox: refSlideBox, leftButton: React.createElement(ButtonCarousel_1.Button, { handle: handleLeft, customRender: renderLeftButton, side: const_1.sideEnum.LEFT }), rightButton: React.createElement(ButtonCarousel_1.Button, { handle: handleRight, customRender: renderRightButton, side: const_1.sideEnum.RIGHT }), isRelative: isRelative }, React.Children.map(children, (child, i) => {
         return (React.createElement(Slide_1.Slide, { id: i, data: child, refSize: elementSize.current, marginBlock: marginBlock }));
     })));
