@@ -35,19 +35,21 @@ exports.JustCarousel = ({ children, renderLeftButton, renderRightButton, isRelat
         });
     }, [countChildren]);
     const handleRight = React.useCallback(() => {
-        console.log('++handleRight');
         move(const_1.sideEnum.RIGHT);
     }, [countChildren]);
     const handleLeft = React.useCallback(() => {
-        console.log('++handleLeft');
         move(const_1.sideEnum.LEFT);
     }, [countChildren]);
     /**
      * ********** onTouchMove ********** *
      * TODO fix, move in hook
      */
+    // const blockingScrollEvent = useCallback((e) => {
+    //     e.preventDefault();
+    // }, []);
     const firstFinger = 0;
     const touchStart = React.useRef(null);
+    // const isBlockScroll = React.useRef<boolean>(false);
     const touchSide = React.useRef(null);
     const offsetAnimSlide = 100;
     const onTouchMove = React.useCallback((e) => {
@@ -55,19 +57,15 @@ exports.JustCarousel = ({ children, renderLeftButton, renderRightButton, isRelat
             case 'mousedown':
             case 'touchstart': {
                 touchStart.current = e.touches[firstFinger].screenX;
+                // if (!isBlockScroll.current) {
+                //     isBlockScroll.current = true;
+                //     document.addEventListener('touchmove', blockingScrollEvent, {passive: false});
+                // }
                 break;
             }
             case 'mousemove':
             case 'touchmove': {
-                e.stopPropagation();
-                e.preventDefault();
                 const moveX = touchStart.current - e.touches[firstFinger].screenX;
-                // if (!touchSide.current && moveX >= 5) {
-                //     // document.body
-                //     document.addEventListener('touchmove', function (e) {
-                //         e.preventDefault();
-                //     }, {passive: false});
-                // }
                 if (!touchSide.current && moveX >= 15) {
                     touchSide.current = const_1.sideEnum.RIGHT;
                     // надо убрать анимацию с последнего элемента
@@ -92,15 +90,14 @@ exports.JustCarousel = ({ children, renderLeftButton, renderRightButton, isRelat
                         // это надо исправить
                         moveController.current = new moveController_1.MoveController(refCarousel.current, elementSize.current, marginBlock);
                     }
-                    console.log('++marginBlock 3: ', marginBlock);
                     calcOffset.current = moveController.current.calculate(touchSide.current, countChildren, marginBlock);
                     touchSide.current = null;
                     window.requestAnimationFrame(() => {
                         refSlideBox.current.style.transform = `translateX(${calcOffset.current}px)`;
                     });
-                    document.removeEventListener('touchmove', function (e) {
-                    });
                 }
+                // isBlockScroll.current = false;
+                // document.removeEventListener('touchmove', blockingScrollEvent);
                 break;
             }
             case 'touchcancel':
@@ -109,6 +106,8 @@ exports.JustCarousel = ({ children, renderLeftButton, renderRightButton, isRelat
                     touchSide.current = null;
                     refSlideBox.current.style.transform = `translateX(${calcOffset.current}px)`;
                 }
+                // isBlockScroll.current = false;
+                // document.removeEventListener('touchmove', blockingScrollEvent);
                 break;
             }
         }

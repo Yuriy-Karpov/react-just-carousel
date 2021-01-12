@@ -1,6 +1,6 @@
 {
   "name": "react-just-carousel",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "pure react carousel, without depending",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

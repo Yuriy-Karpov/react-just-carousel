@@ -16,11 +16,10 @@ class MoveController {
             return pre + current + (marginBlock * 2);
         }, 0);
     }
-    // TODO: на счет countChildren не уверен, может тоже можно в конструктор передать
     calculate(side, countChildren, marginBlock) {
         if (side === const_1.sideEnum.RIGHT && this.count < countChildren && !this.end) {
             const widthItem = this.sized[this.count];
-            const offsetAndSlider = Math.abs(this.offset) + this.widthCarousel + widthItem;
+            const offsetAndSlider = Math.abs(this.offset) + this.widthCarousel + widthItem + (marginBlock * 2);
             if (offsetAndSlider >= this.fullWidth) {
                 this.offset = -(this.fullWidth - this.widthCarousel);
                 this.end = true;
