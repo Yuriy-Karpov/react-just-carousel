@@ -7,7 +7,7 @@ const Slide_1 = require("./components/Slide");
 const moveController_1 = require("./utils/moveController");
 const CarouselView_1 = require("./components/CarouselView");
 const ButtonCarousel_1 = require("./components/ButtonCarousel");
-exports.JustCarousel = ({ children, renderLeftButton, renderRightButton, isRelative = true, marginBlock = 0, }) => {
+exports.JustCarousel = ({ children, renderLeftButton, renderRightButton, isRelative = true, marginBlock = 0, onMoveSlide }) => {
     const countChildren = React.Children.count(children);
     const elementSize = React.useRef({});
     const refCarousel = React.useRef(null);
@@ -29,7 +29,16 @@ exports.JustCarousel = ({ children, renderLeftButton, renderRightButton, isRelat
         if (!moveController.current) {
             moveController.current = new moveController_1.MoveController(refCarousel.current, elementSize.current, marginBlock);
         }
-        calcOffset.current = moveController.current.calculate(side, countChildren, marginBlock);
+        const { offset, isLeftEnd, isRightEnd, offsetCount } = moveController.current.calculate(side, countChildren, marginBlock);
+        calcOffset.current = offset;
+        if (onMoveSlide) {
+            onMoveSlide({
+                side,
+                isLeftEnd,
+                isRightEnd,
+                offsetCount,
+            });
+        }
         window.requestAnimationFrame(() => {
             refSlideBox.current.style.transform = `translateX(${calcOffset.current}px)`;
         });
@@ -44,12 +53,8 @@ exports.JustCarousel = ({ children, renderLeftButton, renderRightButton, isRelat
      * ********** onTouchMove ********** *
      * TODO fix, move in hook
      */
-    // const blockingScrollEvent = useCallback((e) => {
-    //     e.preventDefault();
-    // }, []);
     const firstFinger = 0;
     const touchStart = React.useRef(null);
-    // const isBlockScroll = React.useRef<boolean>(false);
     const touchSide = React.useRef(null);
     const offsetAnimSlide = 100;
     const onTouchMove = React.useCallback((e) => {
@@ -57,10 +62,6 @@ exports.JustCarousel = ({ children, renderLeftButton, renderRightButton, isRelat
             case 'mousedown':
             case 'touchstart': {
                 touchStart.current = e.touches[firstFinger].screenX;
-                // if (!isBlockScroll.current) {
-                //     isBlockScroll.current = true;
-                //     document.addEventListener('touchmove', blockingScrollEvent, {passive: false});
-                // }
                 break;
             }
             case 'mousemove':
@@ -90,14 +91,21 @@ exports.JustCarousel = ({ children, renderLeftButton, renderRightButton, isRelat
                         // это надо исправить
                         moveController.current = new moveController_1.MoveController(refCarousel.current, elementSize.current, marginBlock);
                     }
-                    calcOffset.current = moveController.current.calculate(touchSide.current, countChildren, marginBlock);
+                    const { offset, isLeftEnd, isRightEnd, offsetCount } = moveController.current.calculate(touchSide.current, countChildren, marginBlock);
+                    calcOffset.current = offset;
+                    if (onMoveSlide) {
+                        onMoveSlide({
+                            side: touchSide.current,
+                            isLeftEnd,
+                            isRightEnd,
+                            offsetCount,
+                        });
+                    }
                     touchSide.current = null;
                     window.requestAnimationFrame(() => {
                         refSlideBox.current.style.transform = `translateX(${calcOffset.current}px)`;
                     });
                 }
-                // isBlockScroll.current = false;
-                // document.removeEventListener('touchmove', blockingScrollEvent);
                 break;
             }
             case 'touchcancel':
@@ -106,8 +114,6 @@ exports.JustCarousel = ({ children, renderLeftButton, renderRightButton, isRelat
                     touchSide.current = null;
                     refSlideBox.current.style.transform = `translateX(${calcOffset.current}px)`;
                 }
-                // isBlockScroll.current = false;
-                // document.removeEventListener('touchmove', blockingScrollEvent);
                 break;
             }
         }

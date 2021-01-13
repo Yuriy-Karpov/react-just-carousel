@@ -9,5 +9,10 @@ export declare class MoveController {
     private sized;
     constructor(carouselDiv: HTMLDivElement, sized: IElementSizeType, marginBlock: number);
     calculateResize(carouselDiv: HTMLDivElement, sized: IElementSizeType, marginBlock: number): void;
-    calculate(side: sideEnumType, countChildren: number, marginBlock: number): number;
+    calculate(side: sideEnumType, countChildren: number, marginBlock: number): {
+        offset: number;
+        isRightEnd: boolean;
+        isLeftEnd: boolean;
+        offsetCount: number;
+    };
 }
