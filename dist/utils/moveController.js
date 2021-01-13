@@ -29,10 +29,11 @@ class MoveController {
                 this.prevOffset = this.offset;
             }
             this.count++;
-            return this.offset;
+            return { offset: this.offset, isRightEnd: this.end, isLeftEnd: false, offsetCount: this.count };
         }
         if (side === const_1.sideEnum.LEFT && this.count > 0) {
-            const widthItem = this.sized[this.count - 1];
+            this.count--;
+            const widthItem = this.sized[this.count];
             if (this.end) {
                 this.offset = this.prevOffset;
                 this.end = false;
@@ -40,11 +41,12 @@ class MoveController {
             else {
                 this.offset = this.offset + (widthItem + (marginBlock * 2));
             }
-            this.count--;
             this.prevOffset = this.offset;
-            return this.offset;
+            const isLeftEnd = this.count === 0;
+            return { offset: this.offset, isRightEnd: this.end, isLeftEnd: isLeftEnd, offsetCount: this.count };
         }
-        return this.offset;
+        const isLeftEnd = this.count === 0;
+        return { offset: this.offset, isRightEnd: this.end, isLeftEnd: isLeftEnd, offsetCount: this.count };
     }
 }
 exports.MoveController = MoveController;

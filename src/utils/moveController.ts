@@ -41,12 +41,12 @@ export class MoveController {
             this.count++;
 
 
-            return this.offset;
+            return {offset: this.offset, isRightEnd: this.end, isLeftEnd: false, offsetCount: this.count};
         }
 
         if (side === sideEnum.LEFT && this.count > 0) {
-            const widthItem = this.sized[this.count - 1];
-
+            this.count--;
+            const widthItem = this.sized[this.count];
             if (this.end) {
                 this.offset = this.prevOffset;
                 this.end = false;
@@ -54,13 +54,13 @@ export class MoveController {
                 this.offset = this.offset + (widthItem + (marginBlock * 2));
             }
 
-            this.count--;
+
             this.prevOffset = this.offset;
-
-            return this.offset;
+            const isLeftEnd = this.count === 0;
+            return {offset: this.offset, isRightEnd: this.end, isLeftEnd: isLeftEnd, offsetCount: this.count};
         }
-
-        return this.offset;
+        const isLeftEnd = this.count === 0;
+        return {offset: this.offset, isRightEnd: this.end, isLeftEnd: isLeftEnd, offsetCount: this.count};
     }
 }
 
