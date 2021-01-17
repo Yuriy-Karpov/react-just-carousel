@@ -42,7 +42,7 @@ exports.JustCarousel = ({ children, renderLeftButton, renderRightButton, isRelat
         window.requestAnimationFrame(() => {
             refSlideBox.current.style.transform = `translateX(${calcOffset.current}px)`;
         });
-    }, [countChildren]);
+    }, [countChildren, onMoveSlide]);
     const handleRight = React.useCallback(() => {
         move(const_1.sideEnum.RIGHT);
     }, [countChildren]);

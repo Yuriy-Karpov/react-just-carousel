@@ -56,14 +56,14 @@ export const JustCarousel: React.FC<IOptions> = ({
             refSlideBox.current.style.transform = `translateX(${calcOffset.current}px)`
         });
 
-    }, [countChildren]);
+    }, [countChildren, onMoveSlide]);
 
     const handleRight = React.useCallback(() => {
         move(sideEnum.RIGHT);
-    }, [countChildren]);
+    }, [move]);
     const handleLeft = React.useCallback(() => {
         move(sideEnum.LEFT);
-    }, [countChildren]);
+    }, [move]);
 
     /**
      * ********** onTouchMove ********** *
