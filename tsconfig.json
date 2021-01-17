@@ -16,7 +16,7 @@
     "noUnusedLocals": true,
     "module": "commonjs",
     "moduleResolution": "node",
-    "outDir": "/home/mshev/Документы/Projects/infomarium/front/node_modules/react-just-carousel/dist",
+    "outDir": "./dist",
     "sourceMap": true,
     "suppressImplicitAnyIndexErrors": true,
     "target": "ES6",
