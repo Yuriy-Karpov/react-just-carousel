@@ -18,7 +18,6 @@ export class MoveController {
         this.sized = sized;
         this.widthCarousel = carouselDiv.clientWidth;
 
-
         this.fullWidth = Object.values(sized).reduce(
             (pre, current) => {
                 return pre + current + (marginBlock * 2);
@@ -26,15 +25,15 @@ export class MoveController {
         );
     }
 
-    public calculate(side: sideEnumType, countChildren: number, marginBlock: number) {
+    public calculate(side: sideEnumType, countChildren: number, marginBlock: number, stepMove: number) {
         if (side === sideEnum.RIGHT && this.count < countChildren && !this.end) {
             const widthItem = this.sized[this.count];
-            const offsetAndSlider = Math.abs(this.offset) + this.widthCarousel + widthItem + (marginBlock * 2);
+            const offsetAndSlider = Math.abs(this.offset) + this.widthCarousel + ((widthItem + (marginBlock * 2)) * stepMove);
             if (offsetAndSlider >= this.fullWidth) {
                 this.offset = -(this.fullWidth - this.widthCarousel);
                 this.end = true;
             } else {
-                this.offset = this.offset - (widthItem + (marginBlock * 2));
+                this.offset = this.offset - ((widthItem + (marginBlock * 2)) * stepMove);
                 this.prevOffset = this.offset;
             }
 
@@ -51,7 +50,7 @@ export class MoveController {
                 this.offset = this.prevOffset;
                 this.end = false;
             } else {
-                this.offset = this.offset + (widthItem + (marginBlock * 2));
+                this.offset = this.offset + ((widthItem + (marginBlock * 2)) * stepMove);
             }
 
 

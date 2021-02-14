@@ -7,16 +7,21 @@ import {IElementSizeType, IOptions, sideEnumType} from './type';
 import {MoveController} from './utils/moveController';
 import {CarouselView} from './components/CarouselView';
 import {Button} from './components/ButtonCarousel';
+import {useTouchAndMouse} from './hooks/useTouchAndMouse';
 
 
-export const JustCarousel: React.FC<IOptions> = ({
-                                                     children,
-                                                     renderLeftButton,
-                                                     renderRightButton,
-                                                     isRelative = true,
-                                                     marginBlock = 0,
-                                                     onMoveSlide
-                                                 }) => {
+export const JustCarousel: React.FC<IOptions> = (
+    {
+        children,
+        renderLeftButton,
+        renderRightButton,
+        isRelative = true,
+        marginBlock = 0,
+        onMoveSlide,
+        stepMove = 1,
+        deadZoneTouchX = 5,
+        deadZoneTouchY = 5,
+    }) => {
     const countChildren = React.Children.count(children);
     const elementSize: React.MutableRefObject<IElementSizeType> = React.useRef({});
     const refCarousel = React.useRef(null);
@@ -42,7 +47,7 @@ export const JustCarousel: React.FC<IOptions> = ({
         if (!moveController.current) {
             moveController.current = new MoveController(refCarousel.current, elementSize.current, marginBlock);
         }
-        const {offset, isLeftEnd, isRightEnd, offsetCount} = moveController.current.calculate(side, countChildren, marginBlock);
+        const {offset, isLeftEnd, isRightEnd, offsetCount} = moveController.current.calculate(side, countChildren, marginBlock, stepMove);
         calcOffset.current = offset;
         if (onMoveSlide) {
             onMoveSlide({
@@ -56,91 +61,34 @@ export const JustCarousel: React.FC<IOptions> = ({
             refSlideBox.current.style.transform = `translateX(${calcOffset.current}px)`
         });
 
-    }, [countChildren, onMoveSlide]);
+    }, [countChildren, onMoveSlide, stepMove]);
 
     const handleRight = React.useCallback(() => {
         move(sideEnum.RIGHT);
-    }, [move]);
+    }, [move, stepMove]);
     const handleLeft = React.useCallback(() => {
         move(sideEnum.LEFT);
-    }, [move]);
+    }, [move, stepMove]);
+
 
     /**
      * ********** onTouchMove ********** *
-     * TODO fix, move in hook
      */
-
-    const firstFinger = 0;
-    const touchStart = React.useRef(null);
-    const touchSide = React.useRef<null | sideEnumType>(null);
-    const offsetAnimSlide = 100;
-    const onTouchMove = React.useCallback((e) => {
-
-        switch (e.type) {
-            case 'mousedown':
-            case 'touchstart': {
-                touchStart.current = e.touches[firstFinger].screenX;
-                break;
-            }
-            case 'mousemove':
-            case 'touchmove': {
-                const moveX = touchStart.current - e.touches[firstFinger].screenX;
-
-                if (!touchSide.current && moveX >= 15) {
-                    touchSide.current = sideEnum.RIGHT;
-                    // надо убрать анимацию с последнего элемента
-                    const moveOffset = calcOffset.current - offsetAnimSlide;
-                    window.requestAnimationFrame(() => {
-                        refSlideBox.current.style.transform = `translateX(${moveOffset}px)`
-                    });
-                }
-                if (!touchSide.current && moveX <= -15) {
-                    touchSide.current = sideEnum.LEFT;
-                    const moveOffset = calcOffset.current !== 0 ? calcOffset.current + offsetAnimSlide : calcOffset.current;
-                    window.requestAnimationFrame(() => {
-                        refSlideBox.current.style.transform = `translateX(${moveOffset}px)`
-                    });
-                }
-                break;
-            }
-            case 'mouseup':
-            case 'touchend': {
-                if (touchSide.current) {
-                    if (!moveController.current) {
-                        // это надо исправить
-                        moveController.current = new MoveController(refCarousel.current, elementSize.current, marginBlock);
-                    }
-                    const {offset, isLeftEnd, isRightEnd, offsetCount} = moveController.current.calculate(touchSide.current, countChildren, marginBlock);
-                    calcOffset.current = offset;
-                    if (onMoveSlide) {
-                        onMoveSlide({
-                            side: touchSide.current,
-                            isLeftEnd,
-                            isRightEnd,
-                            offsetCount,
-                        });
-                    }
-                    touchSide.current = null;
-                    window.requestAnimationFrame(() => {
-                        refSlideBox.current.style.transform = `translateX(${calcOffset.current}px)`
-                    });
-
-                }
-                break;
-            }
-            case 'touchcancel':
-            default: {
-                if (touchSide.current) {
-                    touchSide.current = null;
-                    refSlideBox.current.style.transform = `translateX(${calcOffset.current}px)`
-                }
-
-                break;
-            }
-
-        }
-    }, [countChildren]);
-
+    useTouchAndMouse({
+        refCarousel,
+        countChildren,
+        moveController,
+        calcOffset,
+        refSlideBox,
+        elementSize,
+        marginBlock,
+        onMoveSlide,
+        stepMove,
+        deadZone: {
+            x: deadZoneTouchX,
+            y: deadZoneTouchY
+        },
+    });
 
     if (!children) {
         return null;
@@ -148,7 +96,6 @@ export const JustCarousel: React.FC<IOptions> = ({
     return (
         <CarouselView
             marginBlock={marginBlock}
-            onTouchMove={onTouchMove}
             refCarousel={refCarousel}
             refSlideBox={refSlideBox}
             leftButton={<Button handle={handleLeft} customRender={renderLeftButton} side={sideEnum.LEFT}/>}
