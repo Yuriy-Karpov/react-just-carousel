@@ -30,7 +30,7 @@ yarn react-just-carousel
 ```
 import 'react-just-carousel/dist/styles.css'; // base style
 ```
-##Props:
+## Props:
 
 | Property          | Required |    Type           | Default  |  Description               | 
 |-------------------|:--------:|:-----------------:|:--------:|:---------------------------|
@@ -44,7 +44,7 @@ import 'react-just-carousel/dist/styles.css'; // base style
 | deadZoneTouchY          | no       | number | 5    | for fine-tuning touch events, dead zones when no events are processed |
 
 
-###IMoveSlideEvent
+### IMoveSlideEvent
 | Property   |  type        | Description |
 |------------|:------------:|:-----------:|
 | side       | sideEnumType | the direction of the carousel, enum 'left' or 'right'|
