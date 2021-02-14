@@ -37,7 +37,7 @@ function App() {
                     responsive, supports content of different heights and widths, an infinite loop, and other functions
                     that are necessary for the carousel.</p>
                 <div className="Carousel-wrap">
-                    <JustCarousel>
+                    <JustCarousel stepMove={3}>
                         {testData.map((item, i) => (
                             <SlideHeader key={item.title} title={i + 1}/>
                         ))}

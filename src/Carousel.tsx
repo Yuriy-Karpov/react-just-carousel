@@ -17,7 +17,10 @@ export const JustCarousel: React.FC<IOptions> = (
         renderRightButton,
         isRelative = true,
         marginBlock = 0,
-        onMoveSlide
+        onMoveSlide,
+        stepMove = 1,
+        deadZoneTouchX = 5,
+        deadZoneTouchY = 5,
     }) => {
     const countChildren = React.Children.count(children);
     const elementSize: React.MutableRefObject<IElementSizeType> = React.useRef({});
@@ -44,7 +47,7 @@ export const JustCarousel: React.FC<IOptions> = (
         if (!moveController.current) {
             moveController.current = new MoveController(refCarousel.current, elementSize.current, marginBlock);
         }
-        const {offset, isLeftEnd, isRightEnd, offsetCount} = moveController.current.calculate(side, countChildren, marginBlock);
+        const {offset, isLeftEnd, isRightEnd, offsetCount} = moveController.current.calculate(side, countChildren, marginBlock, stepMove);
         calcOffset.current = offset;
         if (onMoveSlide) {
             onMoveSlide({
@@ -58,14 +61,14 @@ export const JustCarousel: React.FC<IOptions> = (
             refSlideBox.current.style.transform = `translateX(${calcOffset.current}px)`
         });
 
-    }, [countChildren, onMoveSlide]);
+    }, [countChildren, onMoveSlide, stepMove]);
 
     const handleRight = React.useCallback(() => {
         move(sideEnum.RIGHT);
-    }, [move]);
+    }, [move, stepMove]);
     const handleLeft = React.useCallback(() => {
         move(sideEnum.LEFT);
-    }, [move]);
+    }, [move, stepMove]);
 
 
     /**
@@ -79,7 +82,12 @@ export const JustCarousel: React.FC<IOptions> = (
         refSlideBox,
         elementSize,
         marginBlock,
-        onMoveSlide
+        onMoveSlide,
+        stepMove,
+        deadZone: {
+            x: deadZoneTouchX,
+            y: deadZoneTouchY
+        },
     });
 
     if (!children) {

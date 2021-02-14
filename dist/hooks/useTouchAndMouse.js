@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const React = require("react");
 const const_1 = require("../const");
 const moveController_1 = require("../utils/moveController");
-exports.useTouchAndMouse = ({ refCarousel, countChildren, moveController, calcOffset, refSlideBox, elementSize, marginBlock, onMoveSlide }) => {
+exports.useTouchAndMouse = ({ refCarousel, countChildren, moveController, calcOffset, refSlideBox, elementSize, marginBlock, onMoveSlide, stepMove, deadZone }) => {
     const firstFinger = 0;
     const touchStart = React.useRef(null);
     const touchSide = React.useRef(null);
@@ -26,14 +26,21 @@ exports.useTouchAndMouse = ({ refCarousel, countChildren, moveController, calcOf
         switch (e.type) {
             case 'mousedown':
             case 'touchstart': {
-                touchStart.current = e.touches[firstFinger].screenX;
+                touchStart.current = {
+                    x: e.touches[firstFinger].screenX,
+                    y: e.touches[firstFinger].screenY,
+                };
                 break;
             }
             case 'mousemove':
             case 'touchmove': {
-                const moveX = touchStart.current - e.touches[firstFinger].screenX;
-                if (Math.abs(moveX) >= 5 && e.cancelable) {
+                const moveX = touchStart.current.x - e.touches[firstFinger].screenX;
+                const moveY = touchStart.current.y - e.touches[firstFinger].screenY;
+                if (Math.abs(moveX) >= deadZone.x && e.cancelable) {
                     e.preventDefault();
+                }
+                if (Math.abs(moveY) >= deadZone.y) {
+                    break;
                 }
                 if (!touchSide.current && moveX >= 15) {
                     touchSide.current = const_1.sideEnum.RIGHT;
@@ -59,7 +66,7 @@ exports.useTouchAndMouse = ({ refCarousel, countChildren, moveController, calcOf
                         // это надо исправить
                         moveController.current = new moveController_1.MoveController(refCarousel.current, elementSize.current, marginBlock);
                     }
-                    const { offset, isLeftEnd, isRightEnd, offsetCount } = moveController.current.calculate(touchSide.current, countChildren, marginBlock);
+                    const { offset, isLeftEnd, isRightEnd, offsetCount } = moveController.current.calculate(touchSide.current, countChildren, marginBlock, stepMove);
                     calcOffset.current = offset;
                     if (onMoveSlide) {
                         onMoveSlide({

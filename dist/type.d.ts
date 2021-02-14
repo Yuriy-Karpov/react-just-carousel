@@ -7,6 +7,9 @@ export interface IOptions {
     isRelative?: boolean;
     marginBlock?: number;
     onMoveSlide?: (arg0: IMoveSlideEvent) => void;
+    stepMove?: number;
+    deadZoneTouchX?: number;
+    deadZoneTouchY?: number;
 }
 export interface IMoveSlideEvent {
     side: sideEnumType;
@@ -17,3 +20,7 @@ export interface IMoveSlideEvent {
 export interface IElementSizeType {
     [key: number]: number;
 }
+export declare type coorType = {
+    x: number;
+    y: number;
+};

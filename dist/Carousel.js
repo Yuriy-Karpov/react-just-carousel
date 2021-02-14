@@ -8,7 +8,7 @@ const moveController_1 = require("./utils/moveController");
 const CarouselView_1 = require("./components/CarouselView");
 const ButtonCarousel_1 = require("./components/ButtonCarousel");
 const useTouchAndMouse_1 = require("./hooks/useTouchAndMouse");
-exports.JustCarousel = ({ children, renderLeftButton, renderRightButton, isRelative = true, marginBlock = 0, onMoveSlide }) => {
+exports.JustCarousel = ({ children, renderLeftButton, renderRightButton, isRelative = true, marginBlock = 0, onMoveSlide, stepMove = 1, deadZoneTouchX = 5, deadZoneTouchY = 5, }) => {
     const countChildren = React.Children.count(children);
     const elementSize = React.useRef({});
     const refCarousel = React.useRef(null);
@@ -30,7 +30,7 @@ exports.JustCarousel = ({ children, renderLeftButton, renderRightButton, isRelat
         if (!moveController.current) {
             moveController.current = new moveController_1.MoveController(refCarousel.current, elementSize.current, marginBlock);
         }
-        const { offset, isLeftEnd, isRightEnd, offsetCount } = moveController.current.calculate(side, countChildren, marginBlock);
+        const { offset, isLeftEnd, isRightEnd, offsetCount } = moveController.current.calculate(side, countChildren, marginBlock, stepMove);
         calcOffset.current = offset;
         if (onMoveSlide) {
             onMoveSlide({
@@ -43,13 +43,13 @@ exports.JustCarousel = ({ children, renderLeftButton, renderRightButton, isRelat
         window.requestAnimationFrame(() => {
             refSlideBox.current.style.transform = `translateX(${calcOffset.current}px)`;
         });
-    }, [countChildren, onMoveSlide]);
+    }, [countChildren, onMoveSlide, stepMove]);
     const handleRight = React.useCallback(() => {
         move(const_1.sideEnum.RIGHT);
-    }, [move]);
+    }, [move, stepMove]);
     const handleLeft = React.useCallback(() => {
         move(const_1.sideEnum.LEFT);
-    }, [move]);
+    }, [move, stepMove]);
     /**
      * ********** onTouchMove ********** *
      */
@@ -61,7 +61,12 @@ exports.JustCarousel = ({ children, renderLeftButton, renderRightButton, isRelat
         refSlideBox,
         elementSize,
         marginBlock,
-        onMoveSlide
+        onMoveSlide,
+        stepMove,
+        deadZone: {
+            x: deadZoneTouchX,
+            y: deadZoneTouchY
+        },
     });
     if (!children) {
         return null;

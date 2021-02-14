@@ -16,16 +16,16 @@ class MoveController {
             return pre + current + (marginBlock * 2);
         }, 0);
     }
-    calculate(side, countChildren, marginBlock) {
+    calculate(side, countChildren, marginBlock, stepMove) {
         if (side === const_1.sideEnum.RIGHT && this.count < countChildren && !this.end) {
             const widthItem = this.sized[this.count];
-            const offsetAndSlider = Math.abs(this.offset) + this.widthCarousel + widthItem + (marginBlock * 2);
+            const offsetAndSlider = Math.abs(this.offset) + this.widthCarousel + ((widthItem + (marginBlock * 2)) * stepMove);
             if (offsetAndSlider >= this.fullWidth) {
                 this.offset = -(this.fullWidth - this.widthCarousel);
                 this.end = true;
             }
             else {
-                this.offset = this.offset - (widthItem + (marginBlock * 2));
+                this.offset = this.offset - ((widthItem + (marginBlock * 2)) * stepMove);
                 this.prevOffset = this.offset;
             }
             this.count++;
@@ -39,7 +39,7 @@ class MoveController {
                 this.end = false;
             }
             else {
-                this.offset = this.offset + (widthItem + (marginBlock * 2));
+                this.offset = this.offset + ((widthItem + (marginBlock * 2)) * stepMove);
             }
             this.prevOffset = this.offset;
             const isLeftEnd = this.count === 0;

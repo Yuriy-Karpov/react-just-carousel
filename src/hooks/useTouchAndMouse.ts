@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {IElementSizeType, IMoveSlideEvent, sideEnumType} from '../type';
+import {coorType, IElementSizeType, IMoveSlideEvent, sideEnumType} from '../type';
 import {sideEnum} from '../const';
 import {MoveController} from '../utils/moveController';
 import {Ref} from 'react';
@@ -11,9 +11,12 @@ export interface IUseTouchAndMouse {
     calcOffset: Ref<number>,
     refSlideBox: Ref<HTMLInputElement>,
     elementSize: React.MutableRefObject<IElementSizeType>,
-    marginBlock:number,
+    marginBlock: number,
     onMoveSlide?: (arg0: IMoveSlideEvent) => void;
+    stepMove: number;
+    deadZone: coorType
 }
+
 
 export const useTouchAndMouse = (
     {
@@ -24,10 +27,12 @@ export const useTouchAndMouse = (
         refSlideBox,
         elementSize,
         marginBlock,
-        onMoveSlide
+        onMoveSlide,
+        stepMove,
+        deadZone
     }: IUseTouchAndMouse) => {
     const firstFinger = 0;
-    const touchStart = React.useRef(null);
+    const touchStart = React.useRef<null | coorType>(null);
     const touchSide = React.useRef<null | sideEnumType>(null);
     const offsetAnimSlide = 100;
     React.useLayoutEffect(() => {
@@ -49,15 +54,22 @@ export const useTouchAndMouse = (
         switch (e.type) {
             case 'mousedown':
             case 'touchstart': {
-                touchStart.current = e.touches[firstFinger].screenX;
+                touchStart.current = {
+                    x: e.touches[firstFinger].screenX,
+                    y: e.touches[firstFinger].screenY,
+                };
                 break;
             }
             case 'mousemove':
             case 'touchmove': {
-                const moveX = touchStart.current - e.touches[firstFinger].screenX;
+                const moveX = touchStart.current.x - e.touches[firstFinger].screenX;
+                const moveY = touchStart.current.y - e.touches[firstFinger].screenY;
 
-                if (Math.abs(moveX) >= 5 && e.cancelable) {
+                if (Math.abs(moveX) >= deadZone.x && e.cancelable) {
                     e.preventDefault();
+                }
+                if (Math.abs(moveY) >= deadZone.y) {
+                    break
                 }
 
                 if (!touchSide.current && moveX >= 15) {
@@ -84,7 +96,7 @@ export const useTouchAndMouse = (
                         // это надо исправить
                         moveController.current = new MoveController(refCarousel.current, elementSize.current, marginBlock);
                     }
-                    const {offset, isLeftEnd, isRightEnd, offsetCount} = moveController.current.calculate(touchSide.current, countChildren, marginBlock);
+                    const {offset, isLeftEnd, isRightEnd, offsetCount} = moveController.current.calculate(touchSide.current, countChildren, marginBlock, stepMove);
                     calcOffset.current = offset;
                     if (onMoveSlide) {
                         onMoveSlide({
