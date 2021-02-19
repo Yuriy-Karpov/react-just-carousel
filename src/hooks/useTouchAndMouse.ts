@@ -2,14 +2,14 @@ import * as React from 'react';
 import {coorType, IElementSizeType, IMoveSlideEvent, sideEnumType} from '../type';
 import {sideEnum} from '../const';
 import {MoveController} from '../utils/moveController';
-import {Ref} from 'react';
+import {MutableRefObject} from 'react';
 
 export interface IUseTouchAndMouse {
-    refCarousel: Ref<any>,
+    refCarousel: MutableRefObject<HTMLInputElement>,
     countChildren: number,
-    moveController: Ref<MoveController>,
-    calcOffset: Ref<number>,
-    refSlideBox: Ref<HTMLInputElement>,
+    moveController: MutableRefObject<MoveController>,
+    calcOffset: MutableRefObject<number>,
+    refSlideBox: MutableRefObject<HTMLInputElement>,
     elementSize: React.MutableRefObject<IElementSizeType>,
     marginBlock: number,
     onMoveSlide?: (arg0: IMoveSlideEvent) => void;
@@ -48,7 +48,8 @@ export const useTouchAndMouse = (
                 refCarousel.current.removeEventListener('touchcancel', onTouchMove);
             }
         }
-    }, [countChildren]);
+        return () => {}
+    }, [countChildren, stepMove]);
 
     const onTouchMove = React.useCallback((e) => {
         switch (e.type) {
@@ -125,5 +126,5 @@ export const useTouchAndMouse = (
             }
 
         }
-    }, [countChildren]);
+    }, [countChildren, stepMove]);
 };

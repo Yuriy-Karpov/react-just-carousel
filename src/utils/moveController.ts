@@ -37,25 +37,30 @@ export class MoveController {
                 this.prevOffset = this.offset;
             }
 
-            this.count++;
+            this.count = this.count + stepMove;
 
 
             return {offset: this.offset, isRightEnd: this.end, isLeftEnd: false, offsetCount: this.count};
         }
 
         if (side === sideEnum.LEFT && this.count > 0) {
-            this.count--;
+            this.count = this.count - stepMove;
+            const isLeftEnd = this.count === 0;
             const widthItem = this.sized[this.count];
             if (this.end) {
                 this.offset = this.prevOffset;
                 this.end = false;
-            } else {
+                this.prevOffset = this.offset;
+
+                return {offset: this.offset, isRightEnd: this.end, isLeftEnd: isLeftEnd, offsetCount: this.count};
+            }
+            if (widthItem) {
                 this.offset = this.offset + ((widthItem + (marginBlock * 2)) * stepMove);
+            } else {
+                this.offset = 0;
+                this.count = 0;
             }
 
-
-            this.prevOffset = this.offset;
-            const isLeftEnd = this.count === 0;
             return {offset: this.offset, isRightEnd: this.end, isLeftEnd: isLeftEnd, offsetCount: this.count};
         }
         const isLeftEnd = this.count === 0;

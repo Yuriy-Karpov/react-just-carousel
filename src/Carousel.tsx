@@ -24,7 +24,7 @@ export const JustCarousel: React.FC<IOptions> = (
     }) => {
     const countChildren = React.Children.count(children);
     const elementSize: React.MutableRefObject<IElementSizeType> = React.useRef({});
-    const refCarousel = React.useRef(null);
+    const refCarousel = React.useRef<HTMLInputElement>(null);
     const refSlideBox = React.useRef(null);
     const calcOffset = React.useRef(0);
     const moveController = React.useRef<MoveController>();
@@ -74,6 +74,7 @@ export const JustCarousel: React.FC<IOptions> = (
     /**
      * ********** onTouchMove ********** *
      */
+
     useTouchAndMouse({
         refCarousel,
         countChildren,

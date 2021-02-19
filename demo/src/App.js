@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useCallback, useState} from 'react';
 import './App.css';
 import {JustCarousel} from 'react-just-carousel';
 import {SlideHeader} from './components/SlideHeader';
@@ -9,6 +9,16 @@ import {InstallBlock} from './blocks/InstallBlock';
 
 
 function App() {
+    const [num, setNum] = useState(4);
+    const onClick = useCallback(()=>{
+        if (num > 1) {
+            setNum(1);
+        } else {
+            setNum(4);
+        }
+
+        console.log('switch')
+    }, [num]);
     return (
         <div className="App">
             <header className="FirstLine">
@@ -36,8 +46,9 @@ function App() {
                     supports touch, fully
                     responsive, supports content of different heights and widths, an infinite loop, and other functions
                     that are necessary for the carousel.</p>
+                <button onClick={onClick}>button</button>
                 <div className="Carousel-wrap">
-                    <JustCarousel stepMove={3}>
+                    <JustCarousel stepMove={num}>
                         {testData.map((item, i) => (
                             <SlideHeader key={item.title} title={i + 1}/>
                         ))}

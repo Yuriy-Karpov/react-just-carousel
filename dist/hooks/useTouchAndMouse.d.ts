@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { coorType, IElementSizeType, IMoveSlideEvent } from '../type';
 import { MoveController } from '../utils/moveController';
-import { Ref } from 'react';
+import { MutableRefObject } from 'react';
 export interface IUseTouchAndMouse {
-    refCarousel: Ref<any>;
+    refCarousel: MutableRefObject<HTMLInputElement>;
     countChildren: number;
-    moveController: Ref<MoveController>;
-    calcOffset: Ref<number>;
-    refSlideBox: Ref<HTMLInputElement>;
+    moveController: MutableRefObject<MoveController>;
+    calcOffset: MutableRefObject<number>;
+    refSlideBox: MutableRefObject<HTMLInputElement>;
     elementSize: React.MutableRefObject<IElementSizeType>;
     marginBlock: number;
     onMoveSlide?: (arg0: IMoveSlideEvent) => void;

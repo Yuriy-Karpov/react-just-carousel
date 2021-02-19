@@ -226,7 +226,12 @@ template {
     width: 900px;
     margin: 60px auto 0;
 }
-
+@media screen and (max-width: 900px) {
+    .Carousel-wrap {
+        width: 600px;
+        margin: 60px auto 0;
+    }
+}
 .menu__link {
     margin-left: 25px;
     color: #fff;
