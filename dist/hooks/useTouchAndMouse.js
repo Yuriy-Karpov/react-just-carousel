@@ -22,7 +22,7 @@ exports.useTouchAndMouse = ({ refCarousel, countChildren, moveController, calcOf
             };
         }
         return () => { };
-    }, [countChildren, stepMove]);
+    }, [countChildren, stepMove, marginBlock]);
     const onTouchMove = React.useCallback((e) => {
         switch (e.type) {
             case 'mousedown':
@@ -93,6 +93,6 @@ exports.useTouchAndMouse = ({ refCarousel, countChildren, moveController, calcOf
                 break;
             }
         }
-    }, [countChildren, stepMove]);
+    }, [countChildren, stepMove, marginBlock]);
 };
 //# sourceMappingURL=useTouchAndMouse.js.map

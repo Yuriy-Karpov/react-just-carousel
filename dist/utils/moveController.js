@@ -15,6 +15,16 @@ class MoveController {
         this.fullWidth = Object.values(sized).reduce((pre, current) => {
             return pre + current + (marginBlock * 2);
         }, 0);
+        if (this.count > 0) {
+            let offsetAcc = 0;
+            for (let i = 0; i < this.count; i++) {
+                const widthItem = this.sized[i];
+                offsetAcc += widthItem + (marginBlock * 2);
+            }
+            this.offset = -offsetAcc;
+            this.prevOffset = -offsetAcc;
+        }
+        return this.offset;
     }
     calculate(side, countChildren, marginBlock, stepMove) {
         if (side === const_1.sideEnum.RIGHT && this.count < countChildren && !this.end) {
@@ -41,7 +51,7 @@ class MoveController {
                 this.prevOffset = this.offset;
                 return { offset: this.offset, isRightEnd: this.end, isLeftEnd: isLeftEnd, offsetCount: this.count };
             }
-            if (widthItem) {
+            if (this.count >= 0) {
                 this.offset = this.offset + ((widthItem + (marginBlock * 2)) * stepMove);
             }
             else {

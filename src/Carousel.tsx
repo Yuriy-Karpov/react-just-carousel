@@ -31,9 +31,14 @@ export const JustCarousel: React.FC<IOptions> = (
 
     const handleWindowResize = React.useCallback(() => {
         if (moveController.current) {
-            moveController.current.calculateResize(refCarousel.current, elementSize.current, marginBlock);
+            const offset = moveController.current.calculateResize(refCarousel.current, elementSize.current, marginBlock);
+            window.requestAnimationFrame(() => {
+                refSlideBox.current.style.transform = `translateX(${offset}px)`
+            });
         }
-    }, []);
+
+
+    }, [marginBlock, children]);
 
     React.useEffect(() => {
         window.addEventListener('resize', handleWindowResize);
@@ -41,7 +46,7 @@ export const JustCarousel: React.FC<IOptions> = (
         return () => {
             window.removeEventListener('resize', handleWindowResize);
         }
-    }, []);
+    }, [marginBlock, children]);
 
     const move = React.useCallback((side: sideEnumType) => {
         if (!moveController.current) {
@@ -61,14 +66,14 @@ export const JustCarousel: React.FC<IOptions> = (
             refSlideBox.current.style.transform = `translateX(${calcOffset.current}px)`
         });
 
-    }, [countChildren, onMoveSlide, stepMove]);
+    }, [countChildren, onMoveSlide, stepMove, marginBlock]);
 
     const handleRight = React.useCallback(() => {
         move(sideEnum.RIGHT);
-    }, [move, stepMove]);
+    }, [move, stepMove, marginBlock]);
     const handleLeft = React.useCallback(() => {
         move(sideEnum.LEFT);
-    }, [move, stepMove]);
+    }, [move, stepMove, marginBlock]);
 
 
     /**

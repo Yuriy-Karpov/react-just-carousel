@@ -23,6 +23,16 @@ export class MoveController {
                 return pre + current + (marginBlock * 2);
             }, 0
         );
+        if (this.count > 0) {
+            let offsetAcc = 0;
+            for (let i = 0; i < this.count; i++) {
+                const widthItem = this.sized[i];
+                offsetAcc += widthItem + (marginBlock * 2);
+            }
+            this.offset = -offsetAcc;
+            this.prevOffset = -offsetAcc;
+        }
+        return this.offset;
     }
 
     public calculate(side: sideEnumType, countChildren: number, marginBlock: number, stepMove: number) {
@@ -54,7 +64,7 @@ export class MoveController {
 
                 return {offset: this.offset, isRightEnd: this.end, isLeftEnd: isLeftEnd, offsetCount: this.count};
             }
-            if (widthItem) {
+            if (this.count >= 0) {
                 this.offset = this.offset + ((widthItem + (marginBlock * 2)) * stepMove);
             } else {
                 this.offset = 0;

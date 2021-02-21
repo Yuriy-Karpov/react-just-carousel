@@ -35,6 +35,7 @@ export const useTouchAndMouse = (
     const touchStart = React.useRef<null | coorType>(null);
     const touchSide = React.useRef<null | sideEnumType>(null);
     const offsetAnimSlide = 100;
+
     React.useLayoutEffect(() => {
         if (refCarousel && refCarousel.current) {
             refCarousel.current.addEventListener('touchstart', onTouchMove);
@@ -49,7 +50,7 @@ export const useTouchAndMouse = (
             }
         }
         return () => {}
-    }, [countChildren, stepMove]);
+    }, [countChildren, stepMove, marginBlock]);
 
     const onTouchMove = React.useCallback((e) => {
         switch (e.type) {
@@ -126,5 +127,5 @@ export const useTouchAndMouse = (
             }
 
         }
-    }, [countChildren, stepMove]);
+    }, [countChildren, stepMove, marginBlock]);
 };

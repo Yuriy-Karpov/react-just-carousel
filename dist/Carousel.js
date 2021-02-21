@@ -17,15 +17,18 @@ exports.JustCarousel = ({ children, renderLeftButton, renderRightButton, isRelat
     const moveController = React.useRef();
     const handleWindowResize = React.useCallback(() => {
         if (moveController.current) {
-            moveController.current.calculateResize(refCarousel.current, elementSize.current, marginBlock);
+            const offset = moveController.current.calculateResize(refCarousel.current, elementSize.current, marginBlock);
+            window.requestAnimationFrame(() => {
+                refSlideBox.current.style.transform = `translateX(${offset}px)`;
+            });
         }
-    }, []);
+    }, [marginBlock, children]);
     React.useEffect(() => {
         window.addEventListener('resize', handleWindowResize);
         return () => {
             window.removeEventListener('resize', handleWindowResize);
         };
-    }, []);
+    }, [marginBlock, children]);
     const move = React.useCallback((side) => {
         if (!moveController.current) {
             moveController.current = new moveController_1.MoveController(refCarousel.current, elementSize.current, marginBlock);
@@ -43,13 +46,13 @@ exports.JustCarousel = ({ children, renderLeftButton, renderRightButton, isRelat
         window.requestAnimationFrame(() => {
             refSlideBox.current.style.transform = `translateX(${calcOffset.current}px)`;
         });
-    }, [countChildren, onMoveSlide, stepMove]);
+    }, [countChildren, onMoveSlide, stepMove, marginBlock]);
     const handleRight = React.useCallback(() => {
         move(const_1.sideEnum.RIGHT);
-    }, [move, stepMove]);
+    }, [move, stepMove, marginBlock]);
     const handleLeft = React.useCallback(() => {
         move(const_1.sideEnum.LEFT);
-    }, [move, stepMove]);
+    }, [move, stepMove, marginBlock]);
     /**
      * ********** onTouchMove ********** *
      */
