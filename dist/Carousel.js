@@ -7,7 +7,9 @@ const Slide_1 = require("./components/Slide");
 const moveController_1 = require("./utils/moveController");
 const CarouselView_1 = require("./components/CarouselView");
 const ButtonCarousel_1 = require("./components/ButtonCarousel");
-const useTouchAndMouse_1 = require("./hooks/useTouchAndMouse");
+const useTouchMove_1 = require("./hooks/useTouchMove");
+const useMouseMove_1 = require("./hooks/useMouseMove");
+const animations_1 = require("./utils/animations");
 exports.JustCarousel = ({ children, renderLeftButton, renderRightButton, isRelative = true, marginBlock = 0, onMoveSlide, stepMove = 1, deadZoneTouchX = 5, deadZoneTouchY = 5, }) => {
     const countChildren = React.Children.count(children);
     const elementSize = React.useRef({});
@@ -18,9 +20,7 @@ exports.JustCarousel = ({ children, renderLeftButton, renderRightButton, isRelat
     const handleWindowResize = React.useCallback(() => {
         if (moveController.current) {
             const offset = moveController.current.calculateResize(refCarousel.current, elementSize.current, marginBlock);
-            window.requestAnimationFrame(() => {
-                refSlideBox.current.style.transform = `translateX(${offset}px)`;
-            });
+            animations_1.transformAnimation(refSlideBox.current, offset);
         }
     }, [marginBlock, children]);
     React.useEffect(() => {
@@ -43,9 +43,7 @@ exports.JustCarousel = ({ children, renderLeftButton, renderRightButton, isRelat
                 offsetCount,
             });
         }
-        window.requestAnimationFrame(() => {
-            refSlideBox.current.style.transform = `translateX(${calcOffset.current}px)`;
-        });
+        animations_1.transformAnimation(refSlideBox.current, calcOffset.current);
     }, [countChildren, onMoveSlide, stepMove, marginBlock]);
     const handleRight = React.useCallback(() => {
         move(const_1.sideEnum.RIGHT);
@@ -56,7 +54,22 @@ exports.JustCarousel = ({ children, renderLeftButton, renderRightButton, isRelat
     /**
      * ********** onTouchMove ********** *
      */
-    useTouchAndMouse_1.useTouchAndMouse({
+    useTouchMove_1.useTouchMove({
+        refCarousel,
+        countChildren,
+        moveController,
+        calcOffset,
+        refSlideBox,
+        elementSize,
+        marginBlock,
+        onMoveSlide,
+        stepMove,
+        deadZone: {
+            x: deadZoneTouchX,
+            y: deadZoneTouchY
+        },
+    });
+    useMouseMove_1.useMouseMove({
         refCarousel,
         countChildren,
         moveController,

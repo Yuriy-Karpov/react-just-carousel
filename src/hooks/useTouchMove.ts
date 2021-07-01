@@ -1,64 +1,80 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const React = require("react");
-const helper_1 = require("./helper");
-exports.useTouchAndMouse = ({ refCarousel, countChildren, moveController, calcOffset, refSlideBox, elementSize, marginBlock, onMoveSlide, stepMove, deadZone }) => {
+import * as React from 'react';
+import {coorType, IElementSizeType, IMoveSlideEvent, sideEnumType} from '../type';
+import {MoveController} from '../utils/moveController';
+import {MutableRefObject} from 'react';
+import {cancelEvent, moveEndEvent, moveEvent} from './helper';
+
+export interface IUseTouchAndMouse {
+    refCarousel: MutableRefObject<HTMLInputElement>,
+    countChildren: number,
+    moveController: MutableRefObject<MoveController>,
+    calcOffset: MutableRefObject<number>,
+    refSlideBox: MutableRefObject<HTMLInputElement>,
+    elementSize: React.MutableRefObject<IElementSizeType>,
+    marginBlock: number,
+    onMoveSlide?: (arg0: IMoveSlideEvent) => void;
+    stepMove: number;
+    deadZone: coorType
+}
+
+
+export const useTouchMove = (
+    {
+        refCarousel,
+        countChildren,
+        moveController,
+        calcOffset,
+        refSlideBox,
+        elementSize,
+        marginBlock,
+        onMoveSlide,
+        stepMove,
+        deadZone
+    }: IUseTouchAndMouse) => {
     const firstFinger = 0;
-    const touchStart = React.useRef(null);
-    const touchSide = React.useRef(null);
-    const isDownMouse = React.useRef(false);
+    const touchStart = React.useRef<null | coorType>(null);
+    const touchSide = React.useRef<null | sideEnumType>(null);
+
     React.useLayoutEffect(() => {
         if (refCarousel && refCarousel.current) {
             refCarousel.current.addEventListener('touchstart', onStartTouchHandler);
             refCarousel.current.addEventListener('touchmove', onMoveTouchHandler);
             refCarousel.current.addEventListener('touchend', onEndMoveHandler);
             refCarousel.current.addEventListener('touchcancel', onCancelMoveHandler);
+
             return () => {
                 refCarousel.current.removeEventListener('touchstart', onStartTouchHandler);
                 refCarousel.current.removeEventListener('touchmove', onMoveTouchHandler);
                 refCarousel.current.removeEventListener('touchend', onEndMoveHandler);
                 refCarousel.current.removeEventListener('touchcancel', onCancelMoveHandler);
-            };
+            }
         }
-        return () => { };
+        return () => {}
     }, [countChildren, stepMove, marginBlock]);
+
+
     const onStartTouchHandler = React.useCallback((e) => {
         touchStart.current = {
             x: e.touches[firstFinger].screenX,
             y: e.touches[firstFinger].screenY,
         };
     }, [touchStart]);
-    const onStartHandler = React.useCallback((e) => {
-        touchStart.current = {
-            x: e.screenX,
-            y: e.screenY,
-        };
-        isDownMouse.current = true;
-    }, [touchStart]);
-    const onMoveMouseHandler = React.useCallback((e) => {
-        if (!touchStart.current)
-            return;
-        if (!isDownMouse.current)
-            return;
-        const moveX = touchStart.current.x - e.screenX;
-        const moveY = touchStart.current.y - e.screenY;
-        if (Math.abs(moveX) >= deadZone.x && e.cancelable) {
-            e.preventDefault();
-        }
-        helper_1.moveEvent({ moveX, moveY, deadZone, touchSide, calcOffset, refSlideBox });
-    }, []);
+
+
     const onMoveTouchHandler = React.useCallback((e) => {
         const moveX = touchStart.current.x - e.touches[firstFinger].screenX;
         const moveY = touchStart.current.y - e.touches[firstFinger].screenY;
+
         if (Math.abs(moveX) >= deadZone.x && e.cancelable) {
             e.preventDefault();
         }
-        helper_1.moveEvent({ moveX, moveY, deadZone, touchSide, calcOffset, refSlideBox });
+        moveEvent({moveX, moveY, deadZone, touchSide, calcOffset, refSlideBox});
     }, []);
+
+
     const onEndMoveHandler = React.useCallback((e) => {
-        isDownMouse.current = false;
         if (touchSide.current) {
-            helper_1.moveEndEvent({
+            moveEndEvent({
                 moveController,
                 refCarousel,
                 elementSize,
@@ -69,11 +85,11 @@ exports.useTouchAndMouse = ({ refCarousel, countChildren, moveController, calcOf
                 calcOffset,
                 onMoveSlide,
                 refSlideBox
-            });
+            })
         }
-    }, [countChildren, stepMove, marginBlock]);
+    },[countChildren, stepMove, marginBlock]);
+
     const onCancelMoveHandler = React.useCallback((e) => {
-        helper_1.cancelEvent({ touchSide, refSlideBox, calcOffset });
+        cancelEvent({touchSide, refSlideBox, calcOffset})
     }, []);
 };
-//# sourceMappingURL=useTouchAndMouse.js.map

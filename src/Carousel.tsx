@@ -7,7 +7,9 @@ import {IElementSizeType, IOptions, sideEnumType} from './type';
 import {MoveController} from './utils/moveController';
 import {CarouselView} from './components/CarouselView';
 import {Button} from './components/ButtonCarousel';
-import {useTouchAndMouse} from './hooks/useTouchAndMouse';
+import {useTouchMove} from './hooks/useTouchMove';
+import {useMouseMove} from './hooks/useMouseMove';
+import {transformAnimation} from './utils/animations';
 
 
 export const JustCarousel: React.FC<IOptions> = (
@@ -32,9 +34,7 @@ export const JustCarousel: React.FC<IOptions> = (
     const handleWindowResize = React.useCallback(() => {
         if (moveController.current) {
             const offset = moveController.current.calculateResize(refCarousel.current, elementSize.current, marginBlock);
-            window.requestAnimationFrame(() => {
-                refSlideBox.current.style.transform = `translateX(${offset}px)`
-            });
+            transformAnimation(refSlideBox.current, offset);
         }
 
 
@@ -62,9 +62,7 @@ export const JustCarousel: React.FC<IOptions> = (
                 offsetCount,
             });
         }
-        window.requestAnimationFrame(() => {
-            refSlideBox.current.style.transform = `translateX(${calcOffset.current}px)`
-        });
+        transformAnimation(refSlideBox.current, calcOffset.current);
 
     }, [countChildren, onMoveSlide, stepMove, marginBlock]);
 
@@ -80,7 +78,23 @@ export const JustCarousel: React.FC<IOptions> = (
      * ********** onTouchMove ********** *
      */
 
-    useTouchAndMouse({
+    useTouchMove({
+        refCarousel,
+        countChildren,
+        moveController,
+        calcOffset,
+        refSlideBox,
+        elementSize,
+        marginBlock,
+        onMoveSlide,
+        stepMove,
+        deadZone: {
+            x: deadZoneTouchX,
+            y: deadZoneTouchY
+        },
+    });
+
+    useMouseMove({
         refCarousel,
         countChildren,
         moveController,
